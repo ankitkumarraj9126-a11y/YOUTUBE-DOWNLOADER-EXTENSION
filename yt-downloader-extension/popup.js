@@ -7,33 +7,33 @@ let SERVER_URL = 'http://localhost:9000'; // Default, will fallback to 127.0.0.1
 
 
 // ── DOM refs ──
-const statusDot     = document.getElementById('statusDot');
-const noVideo       = document.getElementById('noVideo');
-const videoInfo     = document.getElementById('videoInfo');
-const videoThumb    = document.getElementById('videoThumb');
+const statusDot = document.getElementById('statusDot');
+const noVideo = document.getElementById('noVideo');
+const videoInfo = document.getElementById('videoInfo');
+const videoThumb = document.getElementById('videoThumb');
 const videoDuration = document.getElementById('videoDuration');
-const videoTitle    = document.getElementById('videoTitle');
-const videoChannel  = document.getElementById('videoChannel');
+const videoTitle = document.getElementById('videoTitle');
+const videoChannel = document.getElementById('videoChannel');
 const formatSection = document.getElementById('formatSection');
 const videoQualities = document.getElementById('videoQualities');
 const audioQualities = document.getElementById('audioQualities');
-const downloadBtn   = document.getElementById('downloadBtn');
-const btnLabel      = document.getElementById('btnLabel');
-const progressWrap  = document.getElementById('progressWrap');
-const progressFill  = document.getElementById('progressFill');
+const downloadBtn = document.getElementById('downloadBtn');
+const btnLabel = document.getElementById('btnLabel');
+const progressWrap = document.getElementById('progressWrap');
+const progressFill = document.getElementById('progressFill');
 const progressLabel = document.getElementById('progressLabel');
-const historyList   = document.getElementById('historyList');
-const clearHistory  = document.getElementById('clearHistory');
+const historyList = document.getElementById('historyList');
+const clearHistory = document.getElementById('clearHistory');
 
 // ── Init ──
 document.addEventListener('DOMContentLoaded', async () => {
   await detectVideo();
   await renderHistory();
   bindEvents();
-  
+
   // Engineer's Connectivity Check: Test localhost first, then 127.0.0.1
   await bootstrapConnection();
-  
+
   // Start server heartbeat
   setInterval(checkServerHealth, 5000);
 });
@@ -60,14 +60,14 @@ async function bootstrapConnection() {
 // ── Server Health Check ──
 async function checkServerHealth() {
   try {
-    const res = await fetch(`${SERVER_URL}/health`, { 
+    const res = await fetch(`${SERVER_URL}/health`, {
       method: 'GET',
-      signal: AbortSignal.timeout(1500) 
+      signal: AbortSignal.timeout(1500)
     });
     if (res.ok) {
       statusDot.className = 'status-dot active';
       statusDot.title = `Connected to server at ${SERVER_URL}`;
-      
+
       // If we recovered, fix the button if needed
       if (currentVideo && !isDownloading && downloadBtn.disabled) {
         btnLabel.textContent = 'Download';
@@ -79,12 +79,12 @@ async function checkServerHealth() {
   } catch (e) {
     statusDot.className = 'status-dot error';
     statusDot.title = 'Local server not found. Please ensure server.js is running.';
-    
+
     if (currentVideo && !isDownloading) {
       btnLabel.innerHTML = 'Server Offline <span style="font-size:10px; opacity:0.8;">(Click for Help)</span>';
       downloadBtn.disabled = false; // Enable it so they can click to see the guide
       downloadBtn.onclick = () => {
-        chrome.tabs.create({ url: 'https://github.com/YOUR_USERNAME/YOUR_REPO#setup' });
+        chrome.tabs.create({ url: 'https://github.com/ankitkumarraj9126-a11y' });
       };
     }
 
@@ -222,7 +222,7 @@ async function handleDownload() {
     // Send download request to local yt-dlp server
     const controller = new AbortController();
     const timeoutId = setTimeout(() => controller.abort(), 15000); // 15s timeout for handshake
-    
+
     let resp;
     const downloadData = {
       url: `https://www.youtube.com/watch?v=${currentVideo.id}`,
@@ -240,7 +240,7 @@ async function handleDownload() {
       });
     } catch (postErr) {
       console.warn('[Engineer] POST failed, retrying with GET fallback...', postErr);
-      
+
       // 2. Fallback to GET if POST is blocked (CORS/Network error)
       const params = new URLSearchParams(downloadData).toString();
       resp = await fetch(`${SERVER_URL}/download?${params}`, {
@@ -283,7 +283,7 @@ async function handleDownload() {
     } else if (e.message.includes('Failed to fetch') || e.message.includes('NetworkError')) {
       msg = 'Server unreachable. Run server.js';
     }
-    
+
     setProgress(0, msg);
     statusDot.className = 'status-dot error';
     setTimeout(resetDownload, 4000);
@@ -357,5 +357,5 @@ async function renderHistory() {
 }
 
 function escapeHtml(str) {
-  return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
 }
