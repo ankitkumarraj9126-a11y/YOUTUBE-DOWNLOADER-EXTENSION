@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>YT Downloader</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Syne:wght@600;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="popup.css" />
+</head>
+<body>
+  <div class="app">
+    <!-- Header -->
+    <header class="header">
+      <div class="logo">
+        <svg width="22" height="22" viewBox="0 0 22 22" fill="none">
+          <rect width="22" height="22" rx="6" fill="#FF3A3A"/>
+          <polygon points="9,7 16,11 9,15" fill="white"/>
+        </svg>
+        <span class="logo-text">YT<span class="logo-accent">down</span></span>
+      </div>
+      <div class="status-dot" id="statusDot"></div>
+    </header>
+
+    <!-- Video Info -->
+    <div class="video-card" id="videoCard">
+      <div class="no-video" id="noVideo">
+        <div class="no-video-icon">▶</div>
+        <p>Open a YouTube video<br/>to get started</p>
+      </div>
+
+      <div class="video-info" id="videoInfo" style="display:none">
+        <div class="thumb-wrap">
+          <img id="videoThumb" src="" alt="" class="thumb" />
+          <div class="duration-badge" id="videoDuration"></div>
+        </div>
+        <div class="meta">
+          <p class="video-title" id="videoTitle">—</p>
+          <p class="video-channel" id="videoChannel">—</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Format Selector -->
+    <div class="section" id="formatSection" style="display:none">
+      <p class="section-label">Format</p>
+      <div class="format-tabs">
+        <button class="fmt-tab active" data-type="video">
+          <span class="fmt-icon">⬛</span> Video
+        </button>
+        <button class="fmt-tab" data-type="audio">
+          <span class="fmt-icon">◎</span> Audio
+        </button>
+      </div>
+
+      <!-- Video quality options -->
+      <div class="quality-grid" id="videoQualities">
+        <button class="quality-btn active" data-quality="1080">1080p</button>
+        <button class="quality-btn" data-quality="720">720p</button>
+        <button class="quality-btn" data-quality="480">480p</button>
+        <button class="quality-btn" data-quality="360">360p</button>
+      </div>
+
+      <!-- Audio quality options -->
+      <div class="quality-grid" id="audioQualities" style="display:none">
+        <button class="quality-btn active" data-quality="320">320 kbps</button>
+        <button class="quality-btn" data-quality="256">256 kbps</button>
+        <button class="quality-btn" data-quality="128">128 kbps</button>
+      </div>
+    </div>
+
+    <!-- Download Button -->
+    <button class="download-btn" id="downloadBtn" disabled>
+      <span class="btn-label" id="btnLabel">Detecting video…</span>
+      <span class="btn-icon">↓</span>
+    </button>
+
+    <!-- Progress Bar -->
+    <div class="progress-wrap" id="progressWrap" style="display:none">
+      <div class="progress-bar">
+        <div class="progress-fill" id="progressFill"></div>
+      </div>
+      <p class="progress-label" id="progressLabel">Preparing…</p>
+    </div>
+
+    <!-- History -->
+    <div class="history-section" id="historySection">
+      <div class="history-header">
+        <p class="section-label">Recent</p>
+        <button class="clear-btn" id="clearHistory">clear</button>
+      </div>
+      <div id="historyList" class="history-list"></div>
+    </div>
+
+    <!-- Footer note -->
+    <p class="footer-note">⚠ For personal use only. Respect copyright.</p>
+  </div>
+  <script src="popup.js"></script>
+</body>
+</html>
