@@ -54,28 +54,30 @@ async function bootstrapConnection() {
     'http://localhost:9000'
   ];
   
-  // Deduplicate
   const uniqueTargets = [...new Set(targets)];
 
-  for (const url of uniqueTargets) {
-    try {
-      const res = await fetch(`${url}/health`, { 
-        method: 'GET',
-        signal: AbortSignal.timeout(2000) 
-      });
-      if (res.ok) {
-        if (SERVER_URL !== url) {
-          SERVER_URL = url;
-          await chrome.storage.local.set({ working_server_url: url });
-          console.log(`[Engineer] New working URL discovered and saved: ${url}`);
-        }
-        return true;
-      }
-    } catch (e) {
-      // Silent fail during discovery
+  const checkHealth = async (url) => {
+    const res = await fetch(`${url}/health`, {
+      method: 'GET',
+      signal: AbortSignal.timeout(2000)
+    });
+    if (!res.ok) throw new Error('Health check failed');
+    return url;
+  };
+
+  try {
+    const workingUrl = await Promise.any(uniqueTargets.map(checkHealth));
+
+    if (SERVER_URL !== workingUrl) {
+      SERVER_URL = workingUrl;
+      await chrome.storage.local.set({ working_server_url: workingUrl });
+      console.log(`[Engineer] New working URL discovered and saved: ${workingUrl}`);
     }
+    return true;
+  } catch (e) {
+    // All health checks failed
+    return false;
   }
-  return false;
 }
 
 
